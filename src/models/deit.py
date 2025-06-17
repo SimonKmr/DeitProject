@@ -2,7 +2,10 @@ from transformers import DeiTForImageClassification, AutoImageProcessor
 from torchvision import transforms
 import torch.nn.functional as nnf
 from PIL import Image
+from torcheval.metrics import MulticlassF1Score, MulticlassRecall, MulticlassPrecision, MulticlassAccuracy
 import torch
+
+from src.other.stats import Stats
 
 
 class DeitFinetuner:
@@ -72,11 +75,13 @@ class DeitFinetuner:
 
         return predictions
 
+    def save(self,path):
+        self.model.save_pretrained(path)
+
     def validate(self, loader, loss_fn):
-        v_loss = self.valid_loss(loader,loss_fn)
-        v_acc1 = self.accuracy(loader,1)
-        v_acc5 = self.accuracy(loader,5)
-        return v_loss, v_acc1, v_acc5
+        loss = self.valid_loss(loader,loss_fn)
+        acc1, acc5, f1_score, precision, recall = self.metrics(loader)
+        return Stats(loss, acc1, acc5, f1_score, precision, recall)
 
     def valid_loss(self, loader, loss_fn):
         self.model.eval()
@@ -92,30 +97,28 @@ class DeitFinetuner:
         #avr_loss
         return total_valid_loss / (len(loader) * loader.batch_size)
 
-    def accuracy(self, loader, k):
+    def metrics(self, loader):
         self.model.eval()
-        r = 0
-
+        precision = MulticlassPrecision(num_classes=self.num_classes)
+        recall = MulticlassRecall(num_classes=self.num_classes)
+        f1_score = MulticlassF1Score(num_classes=self.num_classes)
+        acc1 = MulticlassAccuracy(num_classes=self.num_classes, k=1)
+        acc5 = MulticlassAccuracy(num_classes=self.num_classes, k=5)
         with torch.no_grad():
-            for vdata in loader:
-                inputs, labels = vdata
+            for data in loader:
+                inputs, targets = data
                 inputs = inputs.to(self.device)
+                targets = targets.to(self.device)
                 outputs = self.model(inputs).logits
-                m = len(outputs)
+                precision.update(outputs,targets)
+                recall.update(outputs, targets)
+                f1_score.update(outputs, targets)
+                acc1.update(outputs, targets)
+                acc5.update(outputs, targets)
 
-                for i in range(m):
-                    label = labels[i].item()
-                    prob = nnf.softmax(outputs[i], dim=-1)
-                    _, indices = prob.topk(k)
-
-                    if k == 1:
-                        indices = indices.item()
-                        r += 1 if label == indices else 0
-                    else:
-                        indices = indices.tolist()
-                        r += 1 if label in indices else 0
-
-        return r / (len(loader) * loader.batch_size)
-
-    def save(self,path):
-        self.model.save_pretrained(path)
+        res_precision = precision.compute().item()
+        res_recall = recall.compute().item()
+        res_f1_score = f1_score.compute().item()
+        res_acc1 = acc1.compute().item()
+        res_acc5 = acc5.compute().item()
+        return res_acc1, res_acc5, res_f1_score, res_precision, res_recall

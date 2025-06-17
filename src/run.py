@@ -21,8 +21,8 @@ loader = DataLoader(dataset, batch_size=batch_size)
 predictions = df.infer("C:\\Users\\Simon\\Desktop\\blaumeise_1.jpg",5)
 print(predictions)
 
-loss, acc1, acc5 = df.validate(loader,nn.CrossEntropyLoss())
-print(f"loss: {loss:.4}, acc1: {acc1:.4}, acc5: {acc5:.4}")
+stats = df.validate(loader,nn.CrossEntropyLoss())
+print(stats)
 
 with open("../idx2classes.json") as f:
     id2label = json.load(f)
