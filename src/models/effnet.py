@@ -1,9 +1,11 @@
 import timm
 import torch
 from PIL import Image
-from transformers import LevitForImageClassification, LevitImageProcessor, EfficientNetImageProcessor
+from transformers import EfficientNetImageProcessor
+from torcheval.metrics import MulticlassF1Score, MulticlassRecall, MulticlassPrecision, MulticlassAccuracy
 from torchvision import datasets, transforms
 from safetensors.torch import save_file
+from src.other.stats import Stats
 
 class EffNetFinetuner:
 
@@ -41,26 +43,8 @@ class EffNetFinetuner:
 
         return total_train_loss / len(loader)
 
-    def validate(self, loader, loss_fn):
-        self.model.eval()
-        total_valid_loss = 0
-        with torch.no_grad():
-            for data in loader:
-                inputs, labels = data
-                inputs = inputs.to(self.device)
-                labels = labels.to(self.device)
-                outputs = self.model(inputs)
-                loss = loss_fn(outputs,labels)
-                total_valid_loss += loss.item()
-
-        return total_valid_loss / len(loader)
-
-
-
     def infer(self,path,k = -1):
         self.model.eval()
-
-        #labels = self.model.pretrained_cfg['label_names']
 
         image = Image.open(path).convert('RGB')
         tensor = self.transform(image).unsqueeze(0).to(self.device)
@@ -83,3 +67,48 @@ class EffNetFinetuner:
     def save(self,path):
         state_dict = self.model.state_dict()
         save_file(state_dict, path) #f"{path}\\levit_5-epochs.safetensors"
+
+    def stats(self, loader, loss_fn, average = None):
+        loss = self.valid_loss(loader, loss_fn)
+        acc1, acc5, f1_score, precision, recall = self.metrics(loader,average)
+        return Stats(loss, acc1, acc5, f1_score, precision, recall)
+
+    def valid_loss(self, loader, loss_fn):
+        self.model.eval()
+        total_valid_loss = 0
+        for data in loader:
+            inputs, labels = data
+            inputs = inputs.to(self.device)
+            labels = labels.to(self.device)
+            outputs = self.model(inputs)
+            loss = loss_fn(outputs, labels)
+            total_valid_loss += loss.item()
+
+        #avr_loss
+        return total_valid_loss / (len(loader) * loader.batch_size)
+
+    def metrics(self, loader, average = None):
+        self.model.eval()
+        precision = MulticlassPrecision(num_classes=self.num_classes, average=average)
+        recall = MulticlassRecall(num_classes=self.num_classes, average=average)
+        f1_score = MulticlassF1Score(num_classes=self.num_classes, average=average)
+        acc1 = MulticlassAccuracy(num_classes=self.num_classes, k=1)
+        acc5 = MulticlassAccuracy(num_classes=self.num_classes, k=5)
+        with torch.no_grad():
+            for data in loader:
+                inputs, targets = data
+                inputs = inputs.to(self.device)
+                targets = targets.to(self.device)
+                outputs = self.model(inputs)
+                precision.update(outputs, targets)
+                recall.update(outputs, targets)
+                f1_score.update(outputs, targets)
+                acc1.update(outputs, targets)
+                acc5.update(outputs, targets)
+
+        res_precision = precision.compute().item()
+        res_recall = recall.compute().item()
+        res_f1_score = f1_score.compute().item()
+        res_acc1 = acc1.compute().item()
+        res_acc5 = acc5.compute().item()
+        return res_acc1, res_acc5, res_f1_score, res_precision, res_recall

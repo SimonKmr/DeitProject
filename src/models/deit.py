@@ -78,9 +78,9 @@ class DeitFinetuner:
     def save(self,path):
         self.model.save_pretrained(path)
 
-    def validate(self, loader, loss_fn):
+    def stats(self, loader, loss_fn, average = None):
         loss = self.valid_loss(loader,loss_fn)
-        acc1, acc5, f1_score, precision, recall = self.metrics(loader)
+        acc1, acc5, f1_score, precision, recall = self.metrics(loader,average)
         return Stats(loss, acc1, acc5, f1_score, precision, recall)
 
     def valid_loss(self, loader, loss_fn):
@@ -97,11 +97,11 @@ class DeitFinetuner:
         #avr_loss
         return total_valid_loss / (len(loader) * loader.batch_size)
 
-    def metrics(self, loader):
+    def metrics(self, loader, average = None):
         self.model.eval()
-        precision = MulticlassPrecision(num_classes=self.num_classes)
-        recall = MulticlassRecall(num_classes=self.num_classes)
-        f1_score = MulticlassF1Score(num_classes=self.num_classes)
+        precision = MulticlassPrecision(num_classes=self.num_classes, average=average)
+        recall = MulticlassRecall(num_classes=self.num_classes, average=average)
+        f1_score = MulticlassF1Score(num_classes=self.num_classes, average=average)
         acc1 = MulticlassAccuracy(num_classes=self.num_classes, k=1)
         acc5 = MulticlassAccuracy(num_classes=self.num_classes, k=5)
         with torch.no_grad():

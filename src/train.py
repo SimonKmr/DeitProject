@@ -13,7 +13,7 @@ from models.effnet import EffNetFinetuner
 model_name = "facebook/deit-base-distilled-patch16-224"
 num_classes = 525  # your number of output classes
 batch_size = 16
-num_epochs = 5
+num_epochs = 10
 device_str = "cuda" if torch.cuda.is_available() else "cpu"
 train_folder = "D:\\Datasets\\bird-species-dataset\\data\\train"
 valid_folder = "D:\\Datasets\\bird-species-dataset\\data\\valid"
@@ -44,18 +44,24 @@ loss_fn = nn.CrossEntropyLoss()
 
 # Training loop
 training_start_time = time.time()
-
+stats_list = []
 for epoch in range(num_epochs):
     epoch_start_time = time.time()
 
     avr_train_loss = ft.train_epoch(train_loader,loss_fn,optimizer)
-    avr_valid_loss = ft.validate(train_loader,loss_fn)
+    stats = ft.stats(train_loader,loss_fn,"weighted")
+    stats_list.append(stats)
 
-    epoch_time_str = time.time() - epoch_start_time
-    print(f"Epoch {epoch+1}/{num_epochs} - Loss train: {avr_train_loss:.4f} valid: {avr_valid_loss:.4f} - Duration: {epoch_time_str}")
+    epoch_time_str = (time.time() - epoch_start_time) /60
+    print(f"[{epoch+1}/{num_epochs}] ({epoch_time_str:.4} mins) - {stats}")
 
 train_time_str = time.time() - training_start_time
 print(f"Training Duration: {train_time_str}")
 
+
+with open("training.csv","w") as f:
+    for e in stats_list:
+        f.write(e.csv())
+
 # Save finetuned model
-ft.save("birds_effnet_5-epochs_2.safetensors")
+ft.save("../networks/birds_effnet_50-epochs_2.safetensors")
