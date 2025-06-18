@@ -1,3 +1,4 @@
+import os
 import time
 import jsonpickle
 import torch
@@ -8,6 +9,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from models.effnet import EffNetFinetuner
+from src.other.stats import Stats
 
 # Configuration
 model_name = "facebook/deit-base-distilled-patch16-224"
@@ -35,9 +37,6 @@ valid_loader = DataLoader(valid_dataset, batch_size=batch_size)
 class_names = {idx: cls for cls, idx in train_dataset.class_to_idx.items()}
 json_object = jsonpickle.encode(class_names)
 
-with open('../idx2classes.json', 'w') as file:
-    file.write(json_object)
-
 # Optimizer and loss
 optimizer = optim.Adam(model.parameters(), lr=2e-5)
 loss_fn = nn.CrossEntropyLoss()
@@ -59,9 +58,20 @@ train_time_str = time.time() - training_start_time
 print(f"Training Duration: {train_time_str}")
 
 
-with open("training.csv","w") as f:
-    for e in stats_list:
-        f.write(e.csv())
+folder = f"birds_effnet_{num_epochs}"
+folder_path = f"../networks/{folder}"
+if not os.path.exists(folder_path):
+    os.makedirs(f"{folder_path}/logs.csv")
 
-# Save finetuned model
-ft.save("../networks/birds_effnet_50-epochs_2.safetensors")
+    #save stats as csv
+    with open(f"{folder_path}/stats.csv","w") as f:
+        Stats.csv_head()
+        for e in stats_list:
+            f.write(e.csv())
+
+    # save id2label as json
+    with open(f"{folder_path}/idx2classes.json", "w") as file:
+        file.write(json_object)
+
+    # Save model weights as safetensors
+    ft.save(f"{folder_path}/model.safetensors")

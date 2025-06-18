@@ -1,13 +1,10 @@
 import torch
 import json
-import torch.nn as nn
-
-from torch.utils.data import DataLoader
-from torchvision import datasets, transforms
 
 from models.deit import DeitFinetuner
 from models.effnet import EffNetFinetuner
 from models.levit import LeVitFinetuner
+
 torch.manual_seed(3)
 
 # Configuration
@@ -24,22 +21,22 @@ models = {
 }
 
 df = models["levit"]
-path = "D:\\Datasets\\bird-species-dataset\\data\\valid"
-dataset = datasets.ImageFolder(root=path, transform=df.transform)
-loader = DataLoader(dataset, batch_size=batch_size)
+#path = "D:\\Datasets\\bird-species-dataset\\data\\valid"
+#dataset = datasets.ImageFolder(root=path, transform=df.transform)
+#loader = DataLoader(dataset, batch_size=batch_size)
 
-stats = df.stats(loader,nn.CrossEntropyLoss(),average)
-print(stats)
+#stats = df.stats(loader,nn.CrossEntropyLoss(),average)
+#print(stats)
 
 with open("../idx2classes.json") as f:
     id2label = json.load(f)
 
-#predictions = df.infer("C:\\Users\\Simon\\Desktop\\blaumeise_1.jpg",5)
-#print(predictions)
+predictions = df.infer("C:\\Users\\Simon\\Desktop\\blaumeise_1.jpg",5)
+print(predictions)
 
 # show top 5 propabilities
-#print("Predicted class:", df.model.config.id2label[predictions[0].label])
-#for i in predictions:
-#    label = id2label[str(i["label"])]
-#    prob = i["score"]
-#    print(f'{label}: {prob:.4}')
+print("Predicted class:", id2label[str(predictions[0]["label"])])
+for i in predictions:
+    label = id2label[str(i["label"])]
+    prob = i["score"]
+    print(f'{label}: {prob:.4}')

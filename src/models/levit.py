@@ -4,7 +4,7 @@ from PIL import Image
 from transformers import LevitImageProcessor
 from torcheval.metrics import MulticlassF1Score, MulticlassRecall, MulticlassPrecision, MulticlassAccuracy
 from torchvision import datasets, transforms
-from safetensors.torch import save_file
+from safetensors.torch import save_file, load_file
 from src.other.stats import Stats
 
 class LeVitFinetuner:
@@ -18,9 +18,9 @@ class LeVitFinetuner:
         if path == None:
             self.model = timm.create_model("timm/levit_128s.fb_dist_in1k",pretrained=True,num_classes=num_classes)
         else:
-            pretrained_config_overlay=dict(file=path)
-            self.model = timm.create_model("timm/levit_128s.fb_dist_in1k",pretrained=True,num_classes=num_classes,
-            pretrained_cfg_overlay=pretrained_config_overlay)
+            state_dict= load_file(path)
+            self.model = timm.create_model("timm/levit_128s.fb_dist_in1k",num_classes=num_classes)
+            self.model.load_state_dict(state_dict)
 
         self.model.to(self.device)
 
@@ -72,7 +72,7 @@ class LeVitFinetuner:
 
     def save(self,path):
         state_dict = self.model.state_dict()
-        save_file(state_dict, path) #f"{path}\\levit_5-epochs.safetensors"
+        save_file(state_dict, path)
 
     def stats(self, loader, loss_fn, average = None):
         loss = self.valid_loss(loader, loss_fn)

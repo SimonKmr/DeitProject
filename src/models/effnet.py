@@ -4,7 +4,7 @@ from PIL import Image
 from transformers import EfficientNetImageProcessor
 from torcheval.metrics import MulticlassF1Score, MulticlassRecall, MulticlassPrecision, MulticlassAccuracy
 from torchvision import datasets, transforms
-from safetensors.torch import save_file
+from safetensors.torch import save_file, load_file
 from src.other.stats import Stats
 
 class EffNetFinetuner:
@@ -15,7 +15,13 @@ class EffNetFinetuner:
         self.num_classes = num_classes
         feature_extractor = EfficientNetImageProcessor.from_pretrained(self.model_name)
 
-        self.model = timm.create_model("timm/efficientnet_b0.ra_in1k",pretrained=True,num_classes=num_classes)
+        if path == None:
+            self.model = timm.create_model("timm/efficientnet_b0.ra_in1k",pretrained=True,num_classes=num_classes)
+        else:
+            state_dict= load_file(path)
+            self.model = timm.create_model("timm/efficientnet_b0.ra_in1k",num_classes=num_classes)
+            self.model.load_state_dict(state_dict)
+
         self.model.to(self.device)
 
         self.transform = transforms.Compose([
@@ -66,7 +72,7 @@ class EffNetFinetuner:
 
     def save(self,path):
         state_dict = self.model.state_dict()
-        save_file(state_dict, path) #f"{path}\\levit_5-epochs.safetensors"
+        save_file(state_dict, path)
 
     def stats(self, loader, loss_fn, average = None):
         loss = self.valid_loss(loader, loss_fn)

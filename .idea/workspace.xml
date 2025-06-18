@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="5803241b-e4bb-4c18-89f1-1599fa1a846f" name="Changes" comment="init">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/deit.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/deit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/models/effnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/effnet.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/models/levit.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/levit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/other/stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/other/stats.py" afterDir="false" />
@@ -79,7 +78,7 @@
       <recent name="C:\Users\Simon\source\repos\Uni\DeitProject\finetuners" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.train">
+  <component name="RunManager" selected="Python.run">
     <configuration name="run" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="DeitProject" />
       <option name="ENV_FILES" value="" />
@@ -185,7 +184,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750169592907</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="init">
+      <option name="closed" value="true" />
+      <created>1750198812778</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1750198812778</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -202,5 +209,16 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
     <option name="LAST_COMMIT_MESSAGE" value="init" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/run.py</url>
+          <line>34</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
