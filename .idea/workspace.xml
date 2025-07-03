@@ -5,7 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5803241b-e4bb-4c18-89f1-1599fa1a846f" name="Changes" comment="init">
+      <change afterPath="$PROJECT_DIR$/src/models/base.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/other/hooks.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/deit.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/deit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/models/effnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/effnet.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/models/levit.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/levit.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/other/stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/other/stats.py" afterDir="false" />
@@ -48,25 +51,25 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python.deit.executor": "Debug",
-    "Python.eval.executor": "Run",
-    "Python.finetune.executor": "Run",
-    "Python.finetune_levit.executor": "Run",
-    "Python.levit.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.old.executor": "Run",
-    "Python.run.executor": "Run",
-    "Python.train.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/Simon/source/repos/Uni/DeitProject",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python.deit.executor&quot;: &quot;Debug&quot;,
+    &quot;Python.eval.executor&quot;: &quot;Run&quot;,
+    &quot;Python.finetune.executor&quot;: &quot;Run&quot;,
+    &quot;Python.finetune_levit.executor&quot;: &quot;Run&quot;,
+    &quot;Python.levit.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.old.executor&quot;: &quot;Run&quot;,
+    &quot;Python.run.executor&quot;: &quot;Run&quot;,
+    &quot;Python.train.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/Simon/source/repos/Uni/DeitProject&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\Simon\source\repos\Uni\DeitProject" />
@@ -78,7 +81,7 @@
       <recent name="C:\Users\Simon\source\repos\Uni\DeitProject\finetuners" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.run">
+  <component name="RunManager" selected="Python.train">
     <configuration name="run" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="DeitProject" />
       <option name="ENV_FILES" value="" />
@@ -192,7 +195,15 @@
       <option name="project" value="LOCAL" />
       <updated>1750198812778</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="init">
+      <option name="closed" value="true" />
+      <created>1750230548761</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1750230548761</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -209,16 +220,5 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="init" />
     <option name="LAST_COMMIT_MESSAGE" value="init" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/run.py</url>
-          <line>34</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

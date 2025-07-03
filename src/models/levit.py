@@ -5,17 +5,21 @@ from transformers import LevitImageProcessor
 from torcheval.metrics import MulticlassF1Score, MulticlassRecall, MulticlassPrecision, MulticlassAccuracy
 from torchvision import datasets, transforms
 from safetensors.torch import save_file, load_file
+from torch.utils.flop_counter import FlopCounterMode
+
+from src.other.hooks import HookingManager
 from src.other.stats import Stats
 
-class LeVitFinetuner:
+class LeVit:
 
-    def __init__(self,device, num_classes, path = None):
+    def __init__(self,device, num_classes : int, path : str = None):
+        self.short_name = "levit"
         self.model_name = "facebook/levit-128S"
         self.device = device
         self.num_classes = num_classes
         self.image_processor = LevitImageProcessor.from_pretrained(self.model_name)
 
-        if path == None:
+        if path is None:
             self.model = timm.create_model("timm/levit_128s.fb_dist_in1k",pretrained=True,num_classes=num_classes)
         else:
             state_dict= load_file(path)
@@ -47,7 +51,7 @@ class LeVitFinetuner:
 
             total_train_loss += loss.item()
 
-    def infer(self, path, k = -1):
+    def infer(self, path : str, k : int = -1):
         self.model.eval()
 
         #labels = self.model.pretrained_cfg['label_names']
@@ -70,7 +74,7 @@ class LeVitFinetuner:
 
         return predictions
 
-    def save(self,path):
+    def save(self, path : str):
         state_dict = self.model.state_dict()
         save_file(state_dict, path)
 
@@ -93,13 +97,14 @@ class LeVitFinetuner:
         # avr_loss
         return total_valid_loss / (len(loader) * loader.batch_size)
 
-    def metrics(self, loader, average = None):
+    def metrics(self, loader, average : str = None):
         self.model.eval()
         precision = MulticlassPrecision(num_classes=self.num_classes, average=average)
         recall = MulticlassRecall(num_classes=self.num_classes, average=average)
         f1_score = MulticlassF1Score(num_classes=self.num_classes, average=average)
         acc1 = MulticlassAccuracy(num_classes=self.num_classes, k=1)
         acc5 = MulticlassAccuracy(num_classes=self.num_classes, k=5)
+
         with torch.no_grad():
             for data in loader:
                 inputs, targets = data
@@ -118,3 +123,29 @@ class LeVitFinetuner:
         res_acc1 = acc1.compute().item()
         res_acc5 = acc5.compute().item()
         return res_acc1, res_acc5, res_f1_score, res_precision, res_recall
+
+    def flops(self):
+        flop_counter = FlopCounterMode(display=False, depth=None)
+        self.model.eval()
+        input = (1,3,224,224)
+        input = torch.randn(input)
+        input = input.to(self.device)
+        with flop_counter:
+            self.model(input)
+        total_flops = flop_counter.get_total_flops()
+        return total_flops
+
+    def infer_hooked(self, path : str):
+        self.model.eval()
+
+        hm = HookingManager()
+        model_children = list(self.model.to('cpu').children())
+        print(model_children[0])
+        model_children[0].register_forward_hook(hm.hook)
+
+        dummy_input = torch.randn(1, 3, 224, 224)
+        _ = self.model(dummy_input)
+
+        self.model.to(self.device)
+
+        return hm.result

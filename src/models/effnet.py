@@ -5,11 +5,15 @@ from transformers import EfficientNetImageProcessor
 from torcheval.metrics import MulticlassF1Score, MulticlassRecall, MulticlassPrecision, MulticlassAccuracy
 from torchvision import datasets, transforms
 from safetensors.torch import save_file, load_file
-from src.other.stats import Stats
 
-class EffNetFinetuner:
+from src.other.hooks import HookingManager
+from src.other.stats import Stats
+from torch.utils.flop_counter import FlopCounterMode
+
+class EffNet:
 
     def __init__(self,device, num_classes, path = None):
+        self.short_name = "effnet"
         self.model_name = "google/efficientnet-b0"
         self.device = device
         self.num_classes = num_classes
@@ -118,3 +122,29 @@ class EffNetFinetuner:
         res_acc1 = acc1.compute().item()
         res_acc5 = acc5.compute().item()
         return res_acc1, res_acc5, res_f1_score, res_precision, res_recall
+
+    def flops(self):
+        flop_counter = FlopCounterMode(display=False, depth=None)
+        self.model.eval()
+        input = (1,3,224,224)
+        input = torch.randn(input)
+        input = input.to(self.device)
+        with flop_counter:
+            self.model(input)
+        total_flops = flop_counter.get_total_flops()
+        return total_flops
+
+    def infer_hooked(self, path : str):
+        self.model.eval()
+
+        hm = HookingManager()
+        model_children = list(self.model.to('cpu').children())
+        print(model_children[0])
+        model_children[0].register_forward_hook(hm.hook)
+
+        dummy_input = torch.randn(1, 3, 224, 224)
+        _ = self.model(dummy_input)
+
+        self.model.to(self.device)
+
+        return hm.result

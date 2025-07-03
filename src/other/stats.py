@@ -14,13 +14,13 @@ class Stats:
 
 
     def csv(self):
-        return f"{self.avr_loss};{self.top_1_acc};{self.top_5_acc};{self.f1_score};{self.precision};{self.recall}\n"
+        return f"{self.epoch};{self.seconds};{self.avr_loss};{self.top_1_acc};{self.top_5_acc};{self.f1_score};{self.precision};{self.recall}\n"
 
     def __repr__(self):
-        return f"avr_loss: {self.avr_loss:.4}, acc1: {self.top_1_acc:.4}, acc5: {self.top_5_acc:.4}, f1: {self.f1_score:.4}, prec: {self.precision:.4}, rcal: {self.recall:.4}"
+        return f"[{self.epoch}] mins: {self.seconds / 60 :.4}, avr_loss: {self.avr_loss:.4}, acc1: {self.top_1_acc:.4}, acc5: {self.top_5_acc:.4}, f1: {self.f1_score:.4}, prec: {self.precision:.4}, rcal: {self.recall:.4}"
 
     __str__ = __repr__
 
     @classmethod
     def csv_head(cls):
-        return f"avr_loss;top_1_acc;top_5_acc;f1_score;precision;recall\n"
+        return f"epoch;seconds;avr_loss;top_1_acc;top_5_acc;f1_score;precision;recall\n"

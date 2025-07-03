@@ -1,26 +1,30 @@
+import timm
 from transformers import DeiTForImageClassification, AutoImageProcessor
 from torchvision import transforms
 import torch.nn.functional as nnf
 from PIL import Image
 from torcheval.metrics import MulticlassF1Score, MulticlassRecall, MulticlassPrecision, MulticlassAccuracy
 import torch
-
+from torch.utils.flop_counter import FlopCounterMode
+from safetensors.torch import save_file, load_file
+from src.other.hooks import HookingManager
 from src.other.stats import Stats
 
 
-class DeitFinetuner:
-
-    def __init__(self, device, num_classes, path = None):
+class Deit:
+    def __init__(self,device, num_classes, path = None):
+        self.short_name = "deit"
         self.model_name = "facebook/deit-tiny-distilled-patch16-224"
-        self.num_classes = num_classes
         self.device = device
-
+        self.num_classes = num_classes
         self.image_processor = AutoImageProcessor.from_pretrained(self.model_name, use_fast=False)
 
         if path == None:
-            self.model = DeiTForImageClassification.from_pretrained(self.model_name, num_labels=num_classes)
+            self.model = timm.create_model("timm/deit_tiny_patch16_224.fb_in1k",pretrained=True,num_classes=num_classes)
         else:
-            self.model = DeiTForImageClassification.from_pretrained(path)
+            state_dict= load_file(path)
+            self.model = timm.create_model("timm/deit_tiny_patch16_224.fb_in1k",num_classes=num_classes)
+            self.model.load_state_dict(state_dict)
 
         self.model.to(self.device)
 
@@ -38,7 +42,7 @@ class DeitFinetuner:
             inputs = inputs.to(self.device)
             labels = labels.to(self.device)
 
-            outputs = self.model(inputs).logits
+            outputs = self.model(inputs)
             loss = loss_fn(outputs, labels)
 
             optimizer.zero_grad()
@@ -47,39 +51,35 @@ class DeitFinetuner:
 
             total_train_loss += loss.item()
 
-    def infer(self, path, k = -1, id2label = None):
-        image = Image.open(path)
-        input = self.image_processor(images=image, return_tensors="pt")
+        return total_train_loss / len(loader)
+
+    def infer(self,path,k = -1):
         self.model.eval()
-        input = input.to(self.device)
-        logits = self.model(**input).logits
-        prob = nnf.softmax(logits, dim=1)
+
+        image = Image.open(path).convert('RGB')
+        tensor = self.transform(image).unsqueeze(0).to(self.device)
+
+        outputs = self.model(tensor)
+        probs = torch.nn.functional.softmax(outputs[0], dim=0)
 
         if k == -1:
             k = self.num_classes
 
-        values, indices = prob.topk(k)
-        values = values[0]
-        indices = indices[0]
+        values, indices = probs.topk(k)
 
-        if id2label == None:
-            predictions = [
-                {"label": i.item(), "score": v.item()}
-                for i, v in zip(indices, values)
-            ]
-        else:
-            predictions = [
-                {"label": id2label[i.item()], "score": v.item()}
-                for i, v in zip(indices, values)
-            ]
+        predictions = [
+            {"label": i.item(), "score": v.item()}
+            for i, v in zip(indices, values)
+        ]
 
         return predictions
 
     def save(self,path):
-        self.model.save_pretrained(path)
+        state_dict = self.model.state_dict()
+        save_file(state_dict, path)
 
     def stats(self, loader, loss_fn, average = None):
-        loss = self.valid_loss(loader,loss_fn)
+        loss = self.valid_loss(loader, loss_fn)
         acc1, acc5, f1_score, precision, recall = self.metrics(loader,average)
         return Stats(loss, acc1, acc5, f1_score, precision, recall)
 
@@ -90,7 +90,7 @@ class DeitFinetuner:
             inputs, labels = data
             inputs = inputs.to(self.device)
             labels = labels.to(self.device)
-            outputs = self.model(inputs).logits
+            outputs = self.model(inputs)
             loss = loss_fn(outputs, labels)
             total_valid_loss += loss.item()
 
@@ -109,8 +109,8 @@ class DeitFinetuner:
                 inputs, targets = data
                 inputs = inputs.to(self.device)
                 targets = targets.to(self.device)
-                outputs = self.model(inputs).logits
-                precision.update(outputs,targets)
+                outputs = self.model(inputs)
+                precision.update(outputs, targets)
                 recall.update(outputs, targets)
                 f1_score.update(outputs, targets)
                 acc1.update(outputs, targets)
@@ -122,3 +122,29 @@ class DeitFinetuner:
         res_acc1 = acc1.compute().item()
         res_acc5 = acc5.compute().item()
         return res_acc1, res_acc5, res_f1_score, res_precision, res_recall
+
+    def flops(self):
+        flop_counter = FlopCounterMode(display=False, depth=None)
+        self.model.eval()
+        input = (1,3,224,224)
+        input = torch.randn(input)
+        input = input.to(self.device)
+        with flop_counter:
+            self.model(input)
+        total_flops = flop_counter.get_total_flops()
+        return total_flops
+
+    def infer_hooked(self, path : str):
+        self.model.eval()
+
+        hm = HookingManager()
+        model_children = list(self.model.to('cpu').children())
+        print(model_children[0])
+        model_children[0].register_forward_hook(hm.hook)
+
+        dummy_input = torch.randn(1, 3, 224, 224)
+        _ = self.model(dummy_input)
+
+        self.model.to(self.device)
+
+        return hm.result
