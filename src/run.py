@@ -1,9 +1,9 @@
 import torch
 import json
 
-from models.deit import DeitFinetuner
-from models.effnet import EffNetFinetuner
-from models.levit import LeVitFinetuner
+from models.deit import Deit
+from models.effnet import EffNet
+from models.levit import LeVit
 
 torch.manual_seed(3)
 
@@ -13,11 +13,11 @@ print("running on",device_str)
 device = torch.device(device_str)
 batch_size = 16
 average = "weighted" # https://docs.pytorch.org/torcheval/stable/generated/torcheval.metrics.functional.multiclass_f1_score.html#torcheval.metrics.functional.multiclass_f1_score
-model_selection = "deit"
+model_selection = "levit"
 models = {
-    "deit" : DeitFinetuner(device, 525, "../networks/birds_deit-dt_5-epochs/model.safetensors"),
-    "effnet" : EffNetFinetuner(device, 525, "../networks/birds_effnet_10/weights.safetensors"),
-    "levit" : LeVitFinetuner(device, 525, "../networks/birds_levit_10/weights.safetensors")
+    "deit" : Deit(device, 525, "../networks/birds_deit/weights_final.safetensors"),
+    "effnet" : EffNet(device, 525, "../networks/birds_effnet/weights_final.safetensors"),
+    "levit" : LeVit(device, 525, "../networks/birds_levit/weights_final.safetensors")
 }
 
 model = models[model_selection]
@@ -28,13 +28,12 @@ model = models[model_selection]
 #stats = df.stats(loader,nn.CrossEntropyLoss(),average)
 #print(stats)
 
-with open("../idx2classes.json") as f:
+with open("../networks/birds_levit/idx2classes.json") as f:
     id2label = json.load(f)
 
 
 
 print('infer hooked: start')
-model.infer_hooked()
 print('infer hooked: end')
 
 

@@ -135,16 +135,17 @@ class LeVit:
         total_flops = flop_counter.get_total_flops()
         return total_flops
 
-    def infer_hooked(self, path : str):
+    def infer_hooked(self, path : str, layer_index = 0):
         self.model.eval()
+
+        image = Image.open(path).convert('RGB')
+        tensor = self.transform(image).unsqueeze(0)
 
         hm = HookingManager()
         model_children = list(self.model.to('cpu').children())
-        print(model_children[0])
-        model_children[0].register_forward_hook(hm.hook)
+        model_children[layer_index].register_forward_hook(hm.hook)
 
-        dummy_input = torch.randn(1, 3, 224, 224)
-        _ = self.model(dummy_input)
+        _ = self.model(tensor)
 
         self.model.to(self.device)
 
