@@ -24,6 +24,14 @@ device = torch.device(device_str)
 batch_size = 16
 average = "weighted" # https://docs.pytorch.org/torcheval/stable/generated/torcheval.metrics.functional.multiclass_f1_score.html#torcheval.metrics.functional.multiclass_f1_score
 
+def length():
+    valid_folder = "D:\\Datasets\\bird-species-dataset\\data\\valid"
+    valid_dataset = datasets.ImageFolder(root=valid_folder)
+    valid_loader = DataLoader(valid_dataset, batch_size=batch_size)
+    return len(valid_loader) * batch_size
+
+print(f"number of pictures: {length()}")
+
 def benchmark(m, x):
     m.model.eval()
     with torch.no_grad():
@@ -43,7 +51,7 @@ def run(model):
         setup = 'from __main__ import benchmark',
         globals={'m':model,'x':valid_loader}
     )
-    res = t0.blocked_autorange(min_run_time=10)
+    res = t0.blocked_autorange(min_run_time=600)
 
     return res
 
@@ -90,6 +98,7 @@ res_levit_cpu_mean = res_levit_cpu.mean
 res_deit_cpu_mean = res_deit_cpu.mean
 
 print(f"deit: {res_deit_cpu_mean}, levit: {res_levit_cpu_mean}, effnet: {res_effnet_cpu_mean}")
+
 with open(f"../../networks/birds_deit/throughput.csv", "w") as f:
     f.write(f'iteration;gpu;cpu\n')
     n = min(len(res_deit_gpu.raw_times),len(res_deit_cpu.raw_times))

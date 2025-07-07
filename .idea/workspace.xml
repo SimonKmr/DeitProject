@@ -7,13 +7,11 @@
     <list default="true" id="5803241b-e4bb-4c18-89f1-1599fa1a846f" name="Changes" comment="init">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/analysis/notebooks/InferenceTime.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/notebooks/InferenceTime.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analysis/scripts/inferenceTime.py" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/scripts/inferenceTime.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analysis/notebooks/Throughput.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/notebooks/Throughput.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/analysis/scripts/throughput.py" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/scripts/throughput.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/networks/birds_deit/inferenceTime.csv" beforeDir="false" afterPath="$PROJECT_DIR$/networks/birds_deit/inferenceTime.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/networks/birds_effnet/inferenceTime.csv" beforeDir="false" afterPath="$PROJECT_DIR$/networks/birds_effnet/inferenceTime.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/networks/birds_levit/inferenceTime.csv" beforeDir="false" afterPath="$PROJECT_DIR$/networks/birds_levit/inferenceTime.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/deit.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/deit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/networks/birds_deit/throughput.csv" beforeDir="false" afterPath="$PROJECT_DIR$/networks/birds_deit/throughput.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/networks/birds_effnet/throughput.csv" beforeDir="false" afterPath="$PROJECT_DIR$/networks/birds_effnet/throughput.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/networks/birds_levit/throughput.csv" beforeDir="false" afterPath="$PROJECT_DIR$/networks/birds_levit/throughput.csv" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -296,7 +294,23 @@
       <option name="project" value="LOCAL" />
       <updated>1751896659589</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="init">
+      <option name="closed" value="true" />
+      <created>1751918177225</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1751918177225</updated>
+    </task>
+    <task id="LOCAL-00017" summary="init">
+      <option name="closed" value="true" />
+      <created>1751918265210</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1751918265210</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
