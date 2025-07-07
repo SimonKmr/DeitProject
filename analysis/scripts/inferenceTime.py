@@ -23,17 +23,18 @@ batch_size = 16
 average = "weighted" # https://docs.pytorch.org/torcheval/stable/generated/torcheval.metrics.functional.multiclass_f1_score.html#torcheval.metrics.functional.multiclass_f1_score
 
 def benchmark(m, x):
-    m.infer(x)
+    m.model.eval()
+    m.model(x)
 
-def run(model,d,n):
+def run(model,n):
     test_tensor = (n, 3, 224, 224)
-    test_tensor = torch.randn(test_tensor).to(d)
+    test_tensor = torch.randn(test_tensor).to(model.device)
     t0 = pbenchmark.Timer(
         stmt = 'benchmark(m,x)',
         setup = 'from __main__ import benchmark',
         globals={'m':model,'x':test_tensor}
     )
-    res = t0.blocked_autorange(min_run_time=1)
+    res = t0.blocked_autorange(min_run_time=600)
 
     return res
 
@@ -44,24 +45,24 @@ print('start test')
 print('testing effnet')
 n = 1
 effnet_gpu = EffNet('cuda', 525, "../../networks/birds_effnet/weights_final.safetensors")
-res_effnet_gpu = run(effnet_gpu, 'cuda',n)
+res_effnet_gpu = run(effnet_gpu,n)
 
 effnet_cpu = EffNet('cpu', 525, "../../networks/birds_effnet/weights_final.safetensors")
-res_effnet_cpu = run(effnet_cpu, 'cpu',n)
+res_effnet_cpu = run(effnet_cpu,n)
 
 print('testing levit')
 levit_gpu = LeVit('cuda', 525, "../../networks/birds_levit/weights_final.safetensors")
-res_levit_gpu = run(levit_gpu, 'cuda',n)
+res_levit_gpu = run(levit_gpu,n)
 
 levit_cpu = LeVit('cpu', 525, "../../networks/birds_levit/weights_final.safetensors")
-res_levit_cpu = run(levit_cpu, 'cpu',n)
+res_levit_cpu = run(levit_cpu,n)
 
 print('testing deit')
 deit_gpu = Deit('cuda', 525, "../../networks/birds_deit/weights_final.safetensors")
-res_deit_gpu = run(deit_gpu, 'cuda',n)
+res_deit_gpu = run(deit_gpu,n)
 
 deit_cpu = Deit('cpu', 525, "../../networks/birds_deit/weights_final.safetensors")
-res_deit_cpu = run(deit_cpu, 'cpu',n)
+res_deit_cpu = run(deit_cpu,n)
 
 print(res_effnet_gpu)
 print(res_effnet_cpu)

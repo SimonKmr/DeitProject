@@ -19,8 +19,8 @@ num_classes = 525  # your number of output classes
 batch_size = 16
 num_epochs = 10
 
-train_folder = "D:\\Datasets\\bird-species-dataset\\data\\train"
-valid_folder = "D:\\Datasets\\bird-species-dataset\\data\\valid"
+
+
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -28,10 +28,12 @@ model = EffNet(device, 525)#,"distilled_tiny"
 
 
 #Load training set
+train_folder = "D:\\Datasets\\bird-species-dataset\\data\\train"
 train_dataset = datasets.ImageFolder(root=train_folder, transform=model.transform)
 train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
 #Load validation set
+valid_folder = "D:\\Datasets\\bird-species-dataset\\data\\valid"
 valid_dataset = datasets.ImageFolder(root=valid_folder, transform=model.transform)
 valid_loader = DataLoader(valid_dataset, batch_size=batch_size)
 

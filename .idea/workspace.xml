@@ -8,12 +8,12 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/analysis/notebooks/InferenceTime.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/notebooks/InferenceTime.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/analysis/scripts/inferenceTime.py" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/scripts/inferenceTime.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/networks/birds_deit/inferenceTime.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/networks/birds_effnet/inferenceTime.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/networks/birds_levit/inferenceTime.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/analysis/scripts/throughput.py" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/scripts/throughput.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/networks/birds_deit/inferenceTime.csv" beforeDir="false" afterPath="$PROJECT_DIR$/networks/birds_deit/inferenceTime.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/networks/birds_effnet/inferenceTime.csv" beforeDir="false" afterPath="$PROJECT_DIR$/networks/birds_effnet/inferenceTime.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/networks/birds_levit/inferenceTime.csv" beforeDir="false" afterPath="$PROJECT_DIR$/networks/birds_levit/inferenceTime.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/models/deit.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/deit.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/effnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/effnet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/models/levit.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/levit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/train.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -65,6 +65,7 @@
     "Python.main.executor": "Run",
     "Python.old.executor": "Run",
     "Python.run.executor": "Run",
+    "Python.throughput.executor": "Run",
     "Python.train.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
@@ -279,7 +280,23 @@
       <option name="project" value="LOCAL" />
       <updated>1751877559795</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="init">
+      <option name="closed" value="true" />
+      <created>1751887238963</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1751887238963</updated>
+    </task>
+    <task id="LOCAL-00015" summary="init">
+      <option name="closed" value="true" />
+      <created>1751896659589</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1751896659589</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

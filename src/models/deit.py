@@ -79,6 +79,16 @@ class Deit:
         elif input is tuple[int,int,int,int]:
             return self.model(input)
 
+        elif input is torch.utils.data.DataLoader:
+            result = []
+            with torch.no_grad():
+                for data in input:
+                    inputs, _ = data
+                    inputs = inputs.to(self.device)
+                    outputs = self.model(inputs)
+                    result.append(outputs)
+            return result
+
 
 
     def save(self,path):
