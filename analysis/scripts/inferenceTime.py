@@ -2,7 +2,9 @@ import torch
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
-import time
+import torch
+from PIL import Image
+import torch.utils.benchmark as pbenchmark
 
 sys.path.insert(0, '../../src/models')
 
@@ -19,41 +21,80 @@ print("running on",device_str)
 device = torch.device(device_str)
 batch_size = 16
 average = "weighted" # https://docs.pytorch.org/torcheval/stable/generated/torcheval.metrics.functional.multiclass_f1_score.html#torcheval.metrics.functional.multiclass_f1_score
-model_selection = "levit"
 
-def test(d):
-    d = torch.device(d)
-    models = {
-        "deit" : Deit(d, 525, "../../networks/birds_deit/weights_final.safetensors"),
-        "effnet" : EffNet(d, 525, "../../networks/birds_effnet/weights_final.safetensors"),
-        "levit" : LeVit(d, 525, "../../networks/birds_levit/weights_final.safetensors")
-    }
-    model = models[model_selection]
+def benchmark(m, x):
+    m.infer(x)
 
-    test_image = "C:\\Users\\Simon\\Desktop\\blaumeise_1.jpg"
+def run(model,d,n):
+    test_tensor = (n, 3, 224, 224)
+    test_tensor = torch.randn(test_tensor).to(d)
+    t0 = pbenchmark.Timer(
+        stmt = 'benchmark(m,x)',
+        setup = 'from __main__ import benchmark',
+        globals={'m':model,'x':test_tensor}
+    )
+    res = t0.blocked_autorange(min_run_time=1)
 
-    print('start warmup')
-    for i in range(100):
-        model.infer(test_image)
+    return res
 
-    print('start test')
-    results = []
-    for i in range(100):
-        start = time.time()
-        model.infer(test_image)
-        stop = time.time()
-        duration = stop-start
-        results.append(duration)
-        print(f'[{i}] [{d}]: {duration}')
+test_image_path = "C:\\Users\\Simon\\Desktop\\blaumeise_1.jpg"
+test_image = Image.open(test_image_path).convert('RGB')
 
-    return results
+print('start test')
+print('testing effnet')
+n = 1
+effnet_gpu = EffNet('cuda', 525, "../../networks/birds_effnet/weights_final.safetensors")
+res_effnet_gpu = run(effnet_gpu, 'cuda',n)
 
-cpu_res = test("cpu")
-gpu_res = test(device_str)
+effnet_cpu = EffNet('cpu', 525, "../../networks/birds_effnet/weights_final.safetensors")
+res_effnet_cpu = run(effnet_cpu, 'cpu',n)
 
-path = f"../../networks/birds_{model_selection}/inferenceTime.csv"
+print('testing levit')
+levit_gpu = LeVit('cuda', 525, "../../networks/birds_levit/weights_final.safetensors")
+res_levit_gpu = run(levit_gpu, 'cuda',n)
 
-with open(f"{path}","w") as f:
-    f.write(f"i;cpu;gpu\n")
-    for i in range(100):
-        f.write(f"{i};{cpu_res[i]};{gpu_res[i]}\n")
+levit_cpu = LeVit('cpu', 525, "../../networks/birds_levit/weights_final.safetensors")
+res_levit_cpu = run(levit_cpu, 'cpu',n)
+
+print('testing deit')
+deit_gpu = Deit('cuda', 525, "../../networks/birds_deit/weights_final.safetensors")
+res_deit_gpu = run(deit_gpu, 'cuda',n)
+
+deit_cpu = Deit('cpu', 525, "../../networks/birds_deit/weights_final.safetensors")
+res_deit_cpu = run(deit_cpu, 'cpu',n)
+
+print(res_effnet_gpu)
+print(res_effnet_cpu)
+print(res_levit_gpu)
+print(res_levit_cpu)
+print(res_deit_gpu)
+print(res_deit_cpu)
+
+res_effnet_gpu_mean = res_effnet_gpu.mean
+res_levit_gpu_mean = res_levit_gpu.mean
+res_deit_gpu_mean = res_deit_gpu.mean
+
+print(f"deit: {res_deit_gpu_mean}, levit: {res_levit_gpu_mean}, effnet: {res_effnet_gpu_mean}")
+
+res_effnet_cpu_mean = res_effnet_cpu.mean
+res_levit_cpu_mean = res_levit_cpu.mean
+res_deit_cpu_mean = res_deit_cpu.mean
+
+print(f"deit: {res_deit_cpu_mean}, levit: {res_levit_cpu_mean}, effnet: {res_effnet_cpu_mean}")
+with open(f"../../networks/birds_deit/inferenceTime.csv", "w") as f:
+    f.write(f'iteration;gpu;cpu\n')
+    n = min(len(res_deit_gpu.raw_times),len(res_deit_cpu.raw_times))
+    for i in range(n):
+        f.write(f'{i};{res_deit_gpu.raw_times[i]};{res_deit_cpu.raw_times[i]}\n')
+
+with open(f"../../networks/birds_levit/inferenceTime.csv", "w") as f:
+    f.write(f'iteration;gpu;cpu\n')
+    n = min(len(res_levit_gpu.raw_times),len(res_levit_cpu.raw_times))
+    for i in range(n):
+        f.write(f'{i};{res_levit_gpu.raw_times[i]};{res_levit_cpu.raw_times[i]}\n')
+
+with open(f"../../networks/birds_effnet/inferenceTime.csv", "w") as f:
+    f.write(f'iteration;gpu;cpu\n')
+    n = min(len(res_effnet_gpu.raw_times),len(res_effnet_cpu.raw_times))
+    for i in range(n):
+        f.write(f'{i};{res_effnet_gpu.raw_times[i]};{res_effnet_cpu.raw_times[i]}\n')

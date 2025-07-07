@@ -5,18 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5803241b-e4bb-4c18-89f1-1599fa1a846f" name="Changes" comment="init">
-      <change afterPath="$PROJECT_DIR$/analysis/notebooks/InferenceTime.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/analysis/notebooks/Throughput.ipynb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/analysis/scripts/inferenceTime.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/analysis/scripts/throughput.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/networks/birds_deit/idx2classes.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/networks/birds_deit/inferenceTime.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/networks/birds_effnet/idx2classes.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/networks/birds_effnet/inferenceTime.csv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/networks/birds_levit/idx2classes.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/networks/birds_levit/inferenceTime.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/analysis/notebooks/Logs.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/notebooks/Logs.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analysis/notebooks/InferenceTime.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/notebooks/InferenceTime.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/analysis/scripts/inferenceTime.py" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/scripts/inferenceTime.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/networks/birds_deit/inferenceTime.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/networks/birds_effnet/inferenceTime.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/networks/birds_levit/inferenceTime.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/deit.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/deit.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/effnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/effnet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/models/levit.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/models/levit.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -274,7 +271,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751877356277</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="init">
+      <option name="closed" value="true" />
+      <created>1751877559795</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1751877559795</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

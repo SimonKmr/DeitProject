@@ -51,28 +51,32 @@ class LeVit:
 
             total_train_loss += loss.item()
 
-    def infer(self, path : str, k : int = -1):
+    def infer(self, input, k : int = -1):
         self.model.eval()
 
-        #labels = self.model.pretrained_cfg['label_names']
+        if input is str:
+            #labels = self.model.pretrained_cfg['label_names']
 
-        image = Image.open(path).convert('RGB')
-        tensor = self.transform(image).unsqueeze(0).to(self.device)
+            image = Image.open(input).convert('RGB')
+            tensor = self.transform(image).unsqueeze(0).to(self.device)
 
-        outputs = self.model(tensor)
-        probs = torch.nn.functional.softmax(outputs[0], dim=0)
+            outputs = self.model(tensor)
+            probs = torch.nn.functional.softmax(outputs[0], dim=0)
 
-        if k == -1:
-            k = self.num_classes
+            if k == -1:
+                k = self.num_classes
 
-        values, indices = probs.topk(k)
+            values, indices = probs.topk(k)
 
-        predictions = [
-            {"label": i.item(), "score": v.item()}
-            for i, v in zip(indices, values)
-        ]
+            predictions = [
+                {"label": i.item(), "score": v.item()}
+                for i, v in zip(indices, values)
+            ]
 
-        return predictions
+            return predictions
+
+        elif input is tuple[int, int, int, int]:
+            return self.model(input)
 
     def save(self, path : str):
         state_dict = self.model.state_dict()

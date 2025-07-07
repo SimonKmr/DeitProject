@@ -53,26 +53,31 @@ class EffNet:
 
         return total_train_loss / len(loader)
 
-    def infer(self,path,k = -1):
+    def infer(self,input,k = -1):
         self.model.eval()
 
-        image = Image.open(path).convert('RGB')
-        tensor = self.transform(image).unsqueeze(0).to(self.device)
+        if input is str:
 
-        outputs = self.model(tensor)
-        probs = torch.nn.functional.softmax(outputs[0], dim=0)
+            image = Image.open(input).convert('RGB')
+            tensor = self.transform(image).unsqueeze(0).to(self.device)
 
-        if k == -1:
-            k = self.num_classes
+            outputs = self.model(tensor)
+            probs = torch.nn.functional.softmax(outputs[0], dim=0)
 
-        values, indices = probs.topk(k)
+            if k == -1:
+                k = self.num_classes
 
-        predictions = [
-            {"label": i.item(), "score": v.item()}
-            for i, v in zip(indices, values)
-        ]
+            values, indices = probs.topk(k)
 
-        return predictions
+            predictions = [
+                {"label": i.item(), "score": v.item()}
+                for i, v in zip(indices, values)
+            ]
+
+            return predictions
+
+        elif input is tuple[int, int, int, int]:
+            return self.model(input)
 
     def save(self,path):
         state_dict = self.model.state_dict()
