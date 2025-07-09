@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5803241b-e4bb-4c18-89f1-1599fa1a846f" name="Changes" comment="init">
-      <change beforePath="$PROJECT_DIR$/analysis/notebooks/OutOfDistribution.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/analysis/notebooks/OutOfDistribution.ipynb" afterDir="false" />
-    </list>
+    <list default="true" id="5803241b-e4bb-4c18-89f1-1599fa1a846f" name="Changes" comment="init" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -338,7 +336,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752058038784</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="init">
+      <option name="closed" value="true" />
+      <created>1752064550785</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1752064550785</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
