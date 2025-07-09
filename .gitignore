@@ -1,3 +1,4 @@
 *.png
 *.safetensors
 .ipynb_checkpoints
+bird_names
