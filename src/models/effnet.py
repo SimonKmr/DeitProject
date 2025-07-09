@@ -56,7 +56,7 @@ class EffNet:
     def infer(self,input,k = -1):
         self.model.eval()
 
-        if input is str:
+        if isinstance(input,str):
 
             image = Image.open(input).convert('RGB')
             tensor = self.transform(image).unsqueeze(0).to(self.device)
@@ -76,8 +76,18 @@ class EffNet:
 
             return predictions
 
-        elif input is tuple[int, int, int, int]:
+        elif isinstance(input, tuple):
             return self.model(input)
+
+        elif isinstance(input, torch.utils.data.DataLoader):
+            result = []
+            with torch.no_grad():
+                for data in input:
+                    inputs, _ = data
+                    inputs = inputs.to(self.device)
+                    outputs = self.model(inputs)
+                    result.append(outputs)
+            return result
 
     def save(self,path):
         state_dict = self.model.state_dict()

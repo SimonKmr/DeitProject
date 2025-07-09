@@ -54,7 +54,7 @@ class LeVit:
     def infer(self, input, k : int = -1):
         self.model.eval()
 
-        if input is str:
+        if isinstance(input,str):
             #labels = self.model.pretrained_cfg['label_names']
 
             image = Image.open(input).convert('RGB')
@@ -75,8 +75,18 @@ class LeVit:
 
             return predictions
 
-        elif input is tuple[int, int, int, int]:
+        elif isinstance(input, tuple): #tuple[int, int, int, int]
             return self.model(input)
+
+        elif isinstance(input, torch.utils.data.DataLoader):
+            result = []
+            with torch.no_grad():
+                for data in input:
+                    inputs, _ = data
+                    inputs = inputs.to(self.device)
+                    outputs = self.model(inputs)
+                    result.append(outputs)
+            return result
 
     def save(self, path : str):
         state_dict = self.model.state_dict()

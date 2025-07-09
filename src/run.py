@@ -31,13 +31,8 @@ model = models[model_selection]
 with open("../networks/birds_levit/idx2classes.json") as f:
     id2label = json.load(f)
 
-
-
-print('infer hooked: start')
-print('infer hooked: end')
-
-
-predictions = model.infer("C:\\Users\\Simon\\Desktop\\blaumeise_1.jpg",5)
+path ="C:\\Users\\Simon\\Desktop\\birds\\Goulds Toucanet.jpg"
+predictions = model.infer(path,5)#blaumeise_1.jpg
 print(predictions)
 
 flops = model.flops()
