@@ -2,6 +2,7 @@ import os
 import time
 import jsonpickle
 import torch
+import datetime
 from safetensors.torch import save_file
 from torchvision import datasets
 from torch.utils.data import DataLoader
@@ -11,21 +12,18 @@ import torch.optim as optim
 from models.effnet import EffNet
 from models.levit import LeVit
 from models.deit import Deit
+from src.other.earlyStopper import EarlyStopper
 
 from src.other.stats import Stats
 
 # Configuration
 num_classes = 525  # your number of output classes
 batch_size = 16
-num_epochs = 10
-
-
-
+num_epochs = 3
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = EffNet(device, 525)#,"distilled_tiny"
-
+model = Deit(device, 525)#,"distilled_tiny"
 
 #Load training set
 train_folder = "D:\\Datasets\\bird-species-dataset\\data\\train"
@@ -57,33 +55,53 @@ optimizer = optim.Adam(model.model.parameters(), lr=2e-5)
 loss_fn = nn.CrossEntropyLoss()
 
 # Training loop
+stats_valid_list = []
+stats_train_list = []
+
 training_start_time = time.time()
-stats_list = []
+early_stopper = EarlyStopper(patience=5,min_delta=10)
+
 for epoch in range(num_epochs):
+    print(datetime.datetime.now())
     epoch_start_time = time.time()
 
     avr_train_loss = model.train_epoch(train_loader, loss_fn, optimizer)
     train_time = time.time() - epoch_start_time
-    stats = model.stats(train_loader, loss_fn, "weighted")
-    stats.epoch = epoch
-    stats.seconds = train_time
 
-    stats_list.append(stats)
+    stats_train = model.stats(train_loader, loss_fn, "weighted")
+    stats_train.epoch = epoch
+    stats_train.seconds = train_time
+
+    stats_valid = model.stats(valid_loader, loss_fn, "weighted")
+    stats_valid.epoch = epoch
+    stats_valid.seconds = train_time
+
+    stats_valid_list.append(stats_valid)
+    stats_train_list.append(stats_train)
 
     if os.path.exists(folder_path):
         model.save(f"{folder_path}/weights_{epoch + 1}.safetensors")
 
     epoch_time_str = (time.time() - epoch_start_time) /60
-    print(stats)
+    print('[train]',stats_train_list)
+    print('[valid]',stats_valid_list)
+
+    if early_stopper.early_stop(stats_valid.avr_loss):
+        break
 
 train_time_str = time.time() - training_start_time
 print(f"Training Duration: {train_time_str}")
 
 
 #save stats as csv
-with open(f"{folder_path}/logs.csv","w") as f:
+with open(f"{folder_path}/logs_train.csv","w") as f:
     Stats.csv_head()
-    for e in stats_list:
+    for e in stats_train_list:
+        f.write(e.csv())
+
+with open(f"{folder_path}/logs_valid.csv","w") as f:
+    Stats.csv_head()
+    for e in stats_valid_list:
         f.write(e.csv())
 
 # Save model weights as safetensors

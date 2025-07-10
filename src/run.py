@@ -5,6 +5,10 @@ from models.deit import Deit
 from models.effnet import EffNet
 from models.levit import LeVit
 
+from torchvision import datasets
+from torch.utils.data import DataLoader
+import torch.nn as nn
+
 torch.manual_seed(3)
 
 # Configuration
@@ -13,9 +17,9 @@ print("running on",device_str)
 device = torch.device(device_str)
 batch_size = 16
 average = "weighted" # https://docs.pytorch.org/torcheval/stable/generated/torcheval.metrics.functional.multiclass_f1_score.html#torcheval.metrics.functional.multiclass_f1_score
-model_selection = "levit"
+model_selection = "effnet"
 models = {
-    "deit" : Deit(device, 525, "../networks/birds_deit/weights_final.safetensors"),
+    #"deit" : Deit(device, 525, "../networks/birds_deit/weights_final.safetensors"),
     "effnet" : EffNet(device, 525, "../networks/birds_effnet/weights_final.safetensors"),
     "levit" : LeVit(device, 525, "../networks/birds_levit/weights_final.safetensors")
 }
@@ -45,3 +49,11 @@ for i in predictions:
     prob = i["score"]
     print(f'{label}: {prob:.4}')
 
+#Load validation set
+valid_folder = "D:\\Datasets\\bird-species-dataset\\data\\valid"
+valid_dataset = datasets.ImageFolder(root=valid_folder, transform=model.transform)
+valid_loader = DataLoader(valid_dataset, batch_size=batch_size)
+
+loss_fn = nn.CrossEntropyLoss()
+stats_valid = model.stats(valid_loader, loss_fn, "weighted")
+print(stats_valid)
