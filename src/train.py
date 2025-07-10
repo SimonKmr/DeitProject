@@ -83,8 +83,8 @@ for epoch in range(num_epochs):
         model.save(f"{folder_path}/weights_{epoch + 1}.safetensors")
 
     epoch_time_str = (time.time() - epoch_start_time) /60
-    print('[train]',stats_train_list)
-    print('[valid]',stats_valid_list)
+    print('[train]',stats_valid)
+    print('[valid]',stats_train)
 
     if early_stopper.early_stop(stats_valid.avr_loss):
         break

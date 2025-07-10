@@ -17,7 +17,7 @@ print("running on",device_str)
 device = torch.device(device_str)
 batch_size = 16
 average = "weighted" # https://docs.pytorch.org/torcheval/stable/generated/torcheval.metrics.functional.multiclass_f1_score.html#torcheval.metrics.functional.multiclass_f1_score
-model_selection = "effnet"
+model_selection = "levit"
 models = {
     #"deit" : Deit(device, 525, "../networks/birds_deit/weights_final.safetensors"),
     "effnet" : EffNet(device, 525, "../networks/birds_effnet/weights_final.safetensors"),
