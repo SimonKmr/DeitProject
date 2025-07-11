@@ -26,14 +26,20 @@ torch.manual_seed(7)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #Deit;LeVit;EffNet
-model = Deit(device, 525, pretrained=False)#,"distilled_tiny"
+model = Deit(device, 525, pretrained=True)#,"distilled_tiny"
 
 # Add folder structure for trained Models
-folder_name = f"birds_{model.short_name}_npt" #_npt
+folder_name = f"birds_{model.short_name}" #_npt
 folder_path = f"../networks/{folder_name}"
+weights_path = f"{folder_path}/weights"
+
+early_stopper = EarlyStopper(patience=3,min_delta=.001)
 
 if not os.path.exists(folder_path):
-    os.makedirs(f"{folder_path}")
+    os.makedirs(folder_path)
+
+if not os.path.exists(weights_path):
+    os.makedirs(weights_path)
 
 #Load training set
 train_folder = "D:\\Datasets\\bird-species-dataset\\data\\train"
@@ -61,52 +67,47 @@ loss_fn = nn.CrossEntropyLoss()
 stats_valid_list = []
 stats_train_list = []
 
-training_start_time = time.time()
-early_stopper = EarlyStopper(patience=3,min_delta=.01)
+#save stats as csv
+with open(f"{folder_path}/logs_train.csv","w") as t, open(f"{folder_path}/logs_valid.csv","w") as v:
+    t.write(Stats.csv_head())
+    v.write(Stats.csv_head())
 
-for epoch in range(num_epochs):
-    print(datetime.datetime.now())
-    epoch_start_time = time.time()
+    training_start_time = time.time()
 
-    avr_train_loss = model.train_epoch(train_loader, loss_fn, optimizer)
-    train_time = time.time() - epoch_start_time
+    for epoch in range(num_epochs):
+        print(datetime.datetime.now())
+        epoch_start_time = time.time()
 
-    #keras.io/getting_started/faq/#why-is-my-training-loss-much-higher-than-my-testing-loss
-    stats_train = model.stats(train_loader, loss_fn, 'micro')
-    stats_train.epoch = epoch
-    stats_train.seconds = train_time
+        avr_train_loss = model.train_epoch(train_loader, loss_fn, optimizer)
+        train_time = time.time() - epoch_start_time
 
-    stats_valid = model.stats(valid_loader, loss_fn, 'micro')
-    stats_valid.epoch = epoch
-    stats_valid.seconds = train_time
+        #keras.io/getting_started/faq/#why-is-my-training-loss-much-higher-than-my-testing-loss
+        stats_train = model.stats(train_loader, loss_fn, 'micro')
+        stats_train.epoch = epoch
+        stats_train.seconds = train_time
+        t.write(stats_train.csv())
+        print('[valid]', stats_train)
 
-    stats_valid_list.append(stats_valid)
-    stats_train_list.append(stats_train)
 
-    if os.path.exists(folder_path):
-        model.save(f"{folder_path}/weights_{epoch + 1}.safetensors")
+        stats_valid = model.stats(valid_loader, loss_fn, 'micro')
+        stats_valid.epoch = epoch
+        stats_valid.seconds = train_time
+        v.write(stats_valid.csv())
+        print('[train]', stats_valid)
 
-    epoch_time_str = (time.time() - epoch_start_time) /60
-    print('[train]',stats_valid)
-    print('[valid]',stats_train)
+        epoch_time_str = (time.time() - epoch_start_time) /60
+        print('[Epoch Time]',epoch_time_str)
 
-    if early_stopper.early_stop(stats_valid.avr_loss):
-        break
+        if os.path.exists(weights_path):
+            model.save(f"{weights_path}/{epoch + 1}.safetensors")
+
+        if early_stopper.early_stop(stats_valid.avr_loss):
+            break
+
+        print()
 
 train_time_str = time.time() - training_start_time
 print(f"Training Duration: {train_time_str}")
 
-
-#save stats as csv
-with open(f"{folder_path}/logs_train.csv","w") as f:
-    Stats.csv_head()
-    for e in stats_train_list:
-        f.write(e.csv())
-
-with open(f"{folder_path}/logs_valid.csv","w") as f:
-    Stats.csv_head()
-    for e in stats_valid_list:
-        f.write(e.csv())
-
 # Save model weights as safetensors
-model.save(f"{folder_path}/weights_final.safetensors")
+model.save(f"{weights_path}/weights_final.safetensors")

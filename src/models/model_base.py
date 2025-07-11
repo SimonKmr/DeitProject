@@ -102,14 +102,15 @@ class ModelBase:
 
     def valid_loss(self, loader, loss_fn):
         self.model.eval()
-        total_valid_loss = 0
-        for data in loader:
-            inputs, labels = data
-            inputs = inputs.to(self.device)
-            labels = labels.to(self.device)
-            outputs = self.model(inputs)
-            loss = loss_fn(outputs, labels)
-            total_valid_loss += loss.item()
+        with torch.no_grad():
+            total_valid_loss = 0
+            for data in loader:
+                inputs, labels = data
+                inputs = inputs.to(self.device)
+                labels = labels.to(self.device)
+                outputs = self.model(inputs)
+                loss = loss_fn(outputs, labels)
+                total_valid_loss += loss.item()
 
         # avr_loss
         return total_valid_loss / (len(loader) * loader.batch_size)
