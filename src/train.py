@@ -70,7 +70,9 @@ stats_train_list = []
 #save stats as csv
 with open(f"{folder_path}/logs_train.csv","w") as t, open(f"{folder_path}/logs_valid.csv","w") as v:
     t.write(Stats.csv_head())
+    t.flush()
     v.write(Stats.csv_head())
+    v.flush()
 
     training_start_time = time.time()
 
@@ -86,6 +88,7 @@ with open(f"{folder_path}/logs_train.csv","w") as t, open(f"{folder_path}/logs_v
         stats_train.epoch = epoch
         stats_train.seconds = train_time
         t.write(stats_train.csv())
+        t.flush()
         print('[valid]', stats_train)
 
 
@@ -93,6 +96,7 @@ with open(f"{folder_path}/logs_train.csv","w") as t, open(f"{folder_path}/logs_v
         stats_valid.epoch = epoch
         stats_valid.seconds = train_time
         v.write(stats_valid.csv())
+        v.flush()
         print('[train]', stats_valid)
 
         epoch_time_str = (time.time() - epoch_start_time) /60
