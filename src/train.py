@@ -19,11 +19,21 @@ from src.other.stats import Stats
 # Configuration
 num_classes = 525  # your number of output classes
 batch_size = 16
-num_epochs = 10
+num_epochs = 50
+
+torch.manual_seed(7)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+#Deit;LeVit;EffNet
 model = Deit(device, 525, pretrained=False)#,"distilled_tiny"
+
+# Add folder structure for trained Models
+folder_name = f"birds_{model.short_name}_npt" #_npt
+folder_path = f"../networks/{folder_name}"
+
+if not os.path.exists(folder_path):
+    os.makedirs(f"{folder_path}")
 
 #Load training set
 train_folder = "D:\\Datasets\\bird-species-dataset\\data\\train"
@@ -39,13 +49,6 @@ valid_loader = DataLoader(valid_dataset, batch_size=batch_size)
 class_names = {idx: cls for cls, idx in train_dataset.class_to_idx.items()}
 json_object = jsonpickle.encode(class_names)
 
-# Add folder structure for trained Models
-folder_name = f"birds_{model.short_name}_no-pretraining"
-folder_path = f"../networks/{folder_name}"
-
-if not os.path.exists(folder_path):
-    os.makedirs(f"{folder_path}")
-
 # save id2label as json
 with open(f"{folder_path}/idx2classes.json", "w") as file:
     file.write(json_object)
@@ -59,7 +62,7 @@ stats_valid_list = []
 stats_train_list = []
 
 training_start_time = time.time()
-early_stopper = EarlyStopper(patience=5,min_delta=10)
+early_stopper = EarlyStopper(patience=3,min_delta=.01)
 
 for epoch in range(num_epochs):
     print(datetime.datetime.now())
