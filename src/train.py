@@ -19,11 +19,11 @@ from src.other.stats import Stats
 # Configuration
 num_classes = 525  # your number of output classes
 batch_size = 16
-num_epochs = 3
+num_epochs = 10
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-model = Deit(device, 525)#,"distilled_tiny"
+model = Deit(device, 525, pretrained=False)#,"distilled_tiny"
 
 #Load training set
 train_folder = "D:\\Datasets\\bird-species-dataset\\data\\train"
@@ -40,7 +40,7 @@ class_names = {idx: cls for cls, idx in train_dataset.class_to_idx.items()}
 json_object = jsonpickle.encode(class_names)
 
 # Add folder structure for trained Models
-folder_name = f"birds_{model.short_name}"
+folder_name = f"birds_{model.short_name}_no-pretraining"
 folder_path = f"../networks/{folder_name}"
 
 if not os.path.exists(folder_path):
@@ -68,11 +68,12 @@ for epoch in range(num_epochs):
     avr_train_loss = model.train_epoch(train_loader, loss_fn, optimizer)
     train_time = time.time() - epoch_start_time
 
-    stats_train = model.stats(train_loader, loss_fn, "weighted")
+    #keras.io/getting_started/faq/#why-is-my-training-loss-much-higher-than-my-testing-loss
+    stats_train = model.stats(train_loader, loss_fn, 'micro')
     stats_train.epoch = epoch
     stats_train.seconds = train_time
 
-    stats_valid = model.stats(valid_loader, loss_fn, "weighted")
+    stats_valid = model.stats(valid_loader, loss_fn, 'micro')
     stats_valid.epoch = epoch
     stats_valid.seconds = train_time
 

@@ -44,30 +44,19 @@ test_image = Image.open(test_image_path).convert('RGB')
 print('start test')
 print('testing effnet')
 n = 1
-effnet_gpu = EffNet('cuda', 525, "../../networks/birds_effnet/weights_final.safetensors")
-res_effnet_gpu = run(effnet_gpu,n)
 
-effnet_cpu = EffNet('cpu', 525, "../../networks/birds_effnet/weights_final.safetensors")
-res_effnet_cpu = run(effnet_cpu,n)
-
-print('testing levit')
-levit_gpu = LeVit('cuda', 525, "../../networks/birds_levit/weights_final.safetensors")
-res_levit_gpu = run(levit_gpu,n)
-
-levit_cpu = LeVit('cpu', 525, "../../networks/birds_levit/weights_final.safetensors")
-res_levit_cpu = run(levit_cpu,n)
-
-print('testing deit')
-deit_gpu = Deit('cuda', 525, "../../networks/birds_deit/weights_final.safetensors")
-res_deit_gpu = run(deit_gpu,n)
 
 deit_cpu = Deit('cpu', 525, "../../networks/birds_deit/weights_final.safetensors")
 res_deit_cpu = run(deit_cpu,n)
 
-print(res_effnet_gpu)
-print(res_effnet_cpu)
-print(res_levit_gpu)
-print(res_levit_cpu)
+print('testing deit (no pretraining)')
+deit_gpu = Deit('cuda', 525, "../../networks/birds_deit_npt/weights_final.safetensors")
+res_deit_gpu = run(deit_gpu,n)
+
+deit_cpu = Deit('cpu', 525, "../../networks/birds_deit_npt/weights_final.safetensors")
+res_deit_cpu = run(deit_cpu,n)
+
+
 print(res_deit_gpu)
 print(res_deit_cpu)
 

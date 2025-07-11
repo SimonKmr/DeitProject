@@ -17,14 +17,17 @@ print("running on",device_str)
 device = torch.device(device_str)
 batch_size = 16
 average = "weighted" # https://docs.pytorch.org/torcheval/stable/generated/torcheval.metrics.functional.multiclass_f1_score.html#torcheval.metrics.functional.multiclass_f1_score
-model_selection = "levit"
-models = {
-    #"deit" : Deit(device, 525, "../networks/birds_deit/weights_final.safetensors"),
-    "effnet" : EffNet(device, 525, "../networks/birds_effnet/weights_final.safetensors"),
-    "levit" : LeVit(device, 525, "../networks/birds_levit/weights_final.safetensors")
-}
+model_selection = "deit-npt"
 
-model = models[model_selection]
+model = None
+if model_selection == "deit":
+    model = Deit(device, 525, "../networks/birds_deit/weights_final.safetensors")
+elif model_selection == "deit-npt":
+    model = Deit(device, 525, "../networks/birds_deit_npt/weights_final.safetensors")
+elif model_selection == "levit":
+    model = LeVit(device, 525, "../networks/birds_levit/weights_final.safetensors")
+elif model_selection == "effnet":
+    model = EffNet(device, 525, "../networks/birds_effnet/weights_final.safetensors")
 #path = "D:\\Datasets\\bird-species-dataset\\data\\valid"
 #dataset = datasets.ImageFolder(root=path, transform=df.transform)
 #loader = DataLoader(dataset, batch_size=batch_size)

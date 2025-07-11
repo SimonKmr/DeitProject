@@ -1,7 +1,7 @@
 class Stats:
     def __init__(self,avr_loss,top_1_acc,top_5_acc,  f1_score, precision, recall ):
         self.epoch = -1
-        self.seconds = -1
+        self.seconds = -60
 
         self.avr_loss = avr_loss
         self.top_1_acc = top_1_acc
