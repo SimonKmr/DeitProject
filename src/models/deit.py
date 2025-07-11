@@ -13,7 +13,7 @@ from src.other.stats import Stats
 
 
 class Deit:
-    def __init__(self,device, num_classes, path = None):
+    def __init__(self,device, num_classes, path = None, pretrained=True):
         self.short_name = "deit"
         self.model_name = "facebook/deit-tiny-distilled-patch16-224"
         self.device = device
@@ -21,7 +21,7 @@ class Deit:
         self.image_processor = AutoImageProcessor.from_pretrained(self.model_name, use_fast=False)
 
         if path == None:
-            self.model = timm.create_model("timm/deit_tiny_patch16_224.fb_in1k",pretrained=True,num_classes=num_classes)
+            self.model = timm.create_model("timm/deit_tiny_patch16_224.fb_in1k",pretrained=pretrained,num_classes=num_classes)
         else:
             state_dict= load_file(path)
             self.model = timm.create_model("timm/deit_tiny_patch16_224.fb_in1k",num_classes=num_classes)
@@ -36,6 +36,7 @@ class Deit:
         ])
 
     def train_epoch(self, loader, loss_fn, optimizer):
+        print(f'using folder "{loader.dataset.root}" for training')
         self.model.train()
         total_train_loss = 0
         for batch in loader:
@@ -96,6 +97,7 @@ class Deit:
         save_file(state_dict, path)
 
     def stats(self, loader, loss_fn, average = None):
+        print(f'using folder "{loader.dataset.root}" for stats')
         loss = self.valid_loss(loader, loss_fn)
         acc1, acc5, f1_score, precision, recall = self.metrics(loader,average)
         return Stats(loss, acc1, acc5, f1_score, precision, recall)
