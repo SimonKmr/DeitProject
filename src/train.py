@@ -19,17 +19,17 @@ from src.other.stats import Stats
 # Configuration
 num_classes = 525  # your number of output classes
 batch_size = 16
-num_epochs = 50
+num_epochs = 100
 
 torch.manual_seed(7)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #Deit;LeVit;EffNet
-model = EffNet(device, 525, pretrained=True)#,"distilled_tiny"
+model = Deit(device, 525, pretrained=False)#,"distilled_tiny"
 
 # Add folder structure for trained Models
-folder_name = f"birds_{model.short_name}" #_npt
+folder_name = f"birds_{model.short_name}_npt" #_npt
 folder_path = f"../networks/{folder_name}"
 weights_path = f"{folder_path}/weights"
 
