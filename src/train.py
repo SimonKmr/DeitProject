@@ -26,14 +26,14 @@ torch.manual_seed(7)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #Deit;LeVit;EffNet
-model = Deit(device, 525, pretrained=False)#,"distilled_tiny"
+model = LeVit(device, 525, pretrained=False)#,"distilled_tiny"
 
 # Add folder structure for trained Models
 folder_name = f"birds_{model.short_name}_npt" #_npt
 folder_path = f"../networks/{folder_name}"
 weights_path = f"{folder_path}/weights"
 
-early_stopper = EarlyStopper(patience=3,min_delta=.001)
+early_stopper = EarlyStopper(patience=5,min_delta=.0001)
 
 if not os.path.exists(folder_path):
     os.makedirs(folder_path)
@@ -89,7 +89,7 @@ with open(f"{folder_path}/logs_train.csv","w") as t, open(f"{folder_path}/logs_v
         stats_train.seconds = train_time
         t.write(stats_train.csv())
         t.flush()
-        print('[valid]', stats_train)
+        print('[train]', stats_train)
 
 
         stats_valid = model.stats(valid_loader, loss_fn, 'micro')
@@ -97,7 +97,7 @@ with open(f"{folder_path}/logs_train.csv","w") as t, open(f"{folder_path}/logs_v
         stats_valid.seconds = train_time
         v.write(stats_valid.csv())
         v.flush()
-        print('[train]', stats_valid)
+        print('[valid]', stats_valid)
 
         epoch_time_str = (time.time() - epoch_start_time) /60
         print('[Epoch Time]',epoch_time_str)
