@@ -60,50 +60,36 @@ test_image = Image.open(test_image_path).convert('RGB')
 
 print('start test')
 print('testing effnet')
-effnet_gpu = EffNet('cuda', 525, "../../networks/birds_effnet/weights_final.safetensors")
+effnet_gpu = EffNet('cuda', 525, "../../networks/birds_effnet/weights/weights_final.safetensors")
 res_effnet_gpu = run(effnet_gpu)
 
-effnet_cpu = EffNet('cpu', 525, "../../networks/birds_effnet/weights_final.safetensors")
+effnet_cpu = EffNet('cpu', 525, "../../networks/birds_effnet/weights/weights_final.safetensors")
 res_effnet_cpu = run(effnet_cpu)
 
-print('testing levit')
-levit_gpu = LeVit('cuda', 525, "../../networks/birds_levit/weights_final.safetensors")
-res_levit_gpu = run(levit_gpu)
-
-levit_cpu = LeVit('cpu', 525, "../../networks/birds_levit/weights_final.safetensors")
-res_levit_cpu = run(levit_cpu)
-
-print('testing deit')
-deit_gpu = Deit('cuda', 525, "../../networks/birds_deit/weights_final.safetensors")
-res_deit_gpu = run(deit_gpu)
-
-deit_cpu = Deit('cpu', 525, "../../networks/birds_deit/weights_final.safetensors")
-res_deit_cpu = run(deit_cpu)
+res_effnet_gpu_mean = res_effnet_gpu.mean
+res_effnet_cpu_mean = res_effnet_cpu.mean
 
 print(res_effnet_gpu)
 print(res_effnet_cpu)
+
+with open(f"../../networks/birds_effnet/throughput.csv", "w") as f:
+    f.write(f'iteration;gpu;cpu\n')
+    n = min(len(res_effnet_gpu.raw_times),len(res_effnet_cpu.raw_times))
+    for i in range(n):
+        f.write(f'{i};{res_effnet_gpu.raw_times[i]};{res_effnet_cpu.raw_times[i]}\n')
+
+print('testing levit')
+levit_gpu = LeVit('cuda', 525, "../../networks/birds_levit/weights/weights_final.safetensors")
+res_levit_gpu = run(levit_gpu)
+
+levit_cpu = LeVit('cpu', 525, "../../networks/birds_levit/weights/weights_final.safetensors")
+res_levit_cpu = run(levit_cpu)
+
+res_levit_gpu_mean = res_levit_gpu.mean
+res_levit_cpu_mean = res_levit_cpu.mean
+
 print(res_levit_gpu)
 print(res_levit_cpu)
-print(res_deit_gpu)
-print(res_deit_cpu)
-
-res_effnet_gpu_mean = res_effnet_gpu.mean
-res_levit_gpu_mean = res_levit_gpu.mean
-res_deit_gpu_mean = res_deit_gpu.mean
-
-print(f"deit: {res_deit_gpu_mean}, levit: {res_levit_gpu_mean}, effnet: {res_effnet_gpu_mean}")
-
-res_effnet_cpu_mean = res_effnet_cpu.mean
-res_levit_cpu_mean = res_levit_cpu.mean
-res_deit_cpu_mean = res_deit_cpu.mean
-
-print(f"deit: {res_deit_cpu_mean}, levit: {res_levit_cpu_mean}, effnet: {res_effnet_cpu_mean}")
-
-with open(f"../../networks/birds_deit/throughput.csv", "w") as f:
-    f.write(f'iteration;gpu;cpu\n')
-    n = min(len(res_deit_gpu.raw_times),len(res_deit_cpu.raw_times))
-    for i in range(n):
-        f.write(f'{i};{res_deit_gpu.raw_times[i]};{res_deit_cpu.raw_times[i]}\n')
 
 with open(f"../../networks/birds_levit/throughput.csv", "w") as f:
     f.write(f'iteration;gpu;cpu\n')
@@ -111,8 +97,21 @@ with open(f"../../networks/birds_levit/throughput.csv", "w") as f:
     for i in range(n):
         f.write(f'{i};{res_levit_gpu.raw_times[i]};{res_levit_cpu.raw_times[i]}\n')
 
-with open(f"../../networks/birds_effnet/throughput.csv", "w") as f:
+print('testing deit')
+deit_gpu = Deit('cuda', 525, "../../networks/birds_deit/weights/weights_final.safetensors")
+res_deit_gpu = run(deit_gpu)
+
+deit_cpu = Deit('cpu', 525, "../../networks/birds_deit/weights/weights_final.safetensors")
+res_deit_cpu = run(deit_cpu)
+
+res_deit_cpu_mean = res_deit_cpu.mean
+res_deit_gpu_mean = res_deit_gpu.mean
+
+print(res_deit_gpu)
+print(res_deit_cpu)
+
+with open(f"../../networks/birds_deit/throughput.csv", "w") as f:
     f.write(f'iteration;gpu;cpu\n')
-    n = min(len(res_effnet_gpu.raw_times),len(res_effnet_cpu.raw_times))
+    n = min(len(res_deit_gpu.raw_times),len(res_deit_cpu.raw_times))
     for i in range(n):
-        f.write(f'{i};{res_effnet_gpu.raw_times[i]};{res_effnet_cpu.raw_times[i]}\n')
+        f.write(f'{i};{res_deit_gpu.raw_times[i]};{res_deit_cpu.raw_times[i]}\n')

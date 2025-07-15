@@ -26,7 +26,7 @@ torch.manual_seed(7)
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 #Deit;LeVit;EffNet
-model = LeVit(device, 525, pretrained=False)#,"distilled_tiny"
+model = EffNet(device, 525, pretrained=False)#,"distilled_tiny"
 
 # Add folder structure for trained Models
 folder_name = f"birds_{model.short_name}_npt" #_npt

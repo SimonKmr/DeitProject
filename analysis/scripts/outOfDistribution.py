@@ -20,14 +20,15 @@ print("running on",device_str)
 device = torch.device(device_str)
 batch_size = 1
 average = "weighted" # https://docs.pytorch.org/torcheval/stable/generated/torcheval.metrics.functional.multiclass_f1_score.html#torcheval.metrics.functional.multiclass_f1_score
-model_selection = "effnet"
-models = {
-    "deit" : Deit(device, 525, "../../networks/birds_deit/weights_final.safetensors"),
-    "effnet" : EffNet(device, 525, "../../networks/birds_effnet/weights_final.safetensors"),
-    "levit" : LeVit(device, 525, "../../networks/birds_levit/weights_final.safetensors")
-}
 
-model = models[model_selection]
+model_selection = "levit"
+model = None
+if model_selection == "deit":
+    model = Deit(device, 525, "../../networks/birds_deit/weights/weights_final.safetensors")
+elif model_selection == "effnet":
+    model = EffNet(device, 525, "../../networks/birds_effnet/weights/weights_final.safetensors")
+elif model_selection == "levit":
+    model = LeVit(device, 525, "../../networks/birds_levit/weights/weights_final.safetensors")
 
 dir = "C:\\Users\\Simon\\Desktop\\birds\\set\\"
 imgs = os.listdir(dir)
