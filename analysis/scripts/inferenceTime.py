@@ -47,9 +47,13 @@ def test(model, n, path_weights, path_inf_log):
     model_cpu = model('cpu', 525, path_weights)
     res_model_cpu = run(model_cpu, n)
 
+    print(res_model_cpu)
+
     model_gpu = model('cuda', 525, path_weights)
     res_model_gpu = run(model_gpu, n)
 
+
+    return
     with open(f"{path_inf_log}/n{n}.csv", "w") as f:
         f.write(f'iteration;gpu;cpu\n')
         n = min(len(res_model_gpu.raw_times), len(res_model_cpu.raw_times))
@@ -57,11 +61,25 @@ def test(model, n, path_weights, path_inf_log):
             f.write(f'{i};{res_model_gpu.raw_times[i]};{res_model_cpu.raw_times[i]}\n')
 
 print('testing deit')
-test(Deit, 64, "../../networks/birds_deit/weights/weights_final.safetensors", "../../networks/birds_deit/inference_time")
+test(Deit, 20, "../../networks/birds_deit/weights/weights_final.safetensors", "../../networks/birds_deit/inference_time")
 print('testing levit')
-test(LeVit, 64,"../../networks/birds_levit/weights/weights_final.safetensors", "../../networks/birds_levit/inference_time")
+test(LeVit, 20,"../../networks/birds_levit/weights/weights_final.safetensors", "../../networks/birds_levit/inference_time")
 print('testing effnet')
-test(EffNet, 64,"../../networks/birds_effnet/weights/weights_final.safetensors", "../../networks/birds_effnet/inference_time")
+test(EffNet, 20,"../../networks/birds_effnet/weights/weights_final.safetensors", "../../networks/birds_effnet/inference_time")
+
+print('testing deit')
+test(Deit, 24, "../../networks/birds_deit/weights/weights_final.safetensors", "../../networks/birds_deit/inference_time")
+print('testing levit')
+test(LeVit, 24,"../../networks/birds_levit/weights/weights_final.safetensors", "../../networks/birds_levit/inference_time")
+print('testing effnet')
+test(EffNet, 24,"../../networks/birds_effnet/weights/weights_final.safetensors", "../../networks/birds_effnet/inference_time")
+
+print('testing deit')
+test(Deit, 28, "../../networks/birds_deit/weights/weights_final.safetensors", "../../networks/birds_deit/inference_time")
+print('testing levit')
+test(LeVit, 28,"../../networks/birds_levit/weights/weights_final.safetensors", "../../networks/birds_levit/inference_time")
+print('testing effnet')
+test(EffNet, 28,"../../networks/birds_effnet/weights/weights_final.safetensors", "../../networks/birds_effnet/inference_time")
 
 quit()
 
@@ -72,3 +90,38 @@ for i in range(1,17):
     test(LeVit, i,"../../networks/birds_levit/weights/weights_final.safetensors", "../../networks/birds_levit/inference_time")
     print('testing effnet')
     test(EffNet, i,"../../networks/birds_effnet/weights/weights_final.safetensors", "../../networks/birds_effnet/inference_time")
+
+print('testing deit')
+test(Deit, 32, "../../networks/birds_deit/weights/weights_final.safetensors", "../../networks/birds_deit/inference_time")
+print('testing levit')
+test(LeVit, 32,"../../networks/birds_levit/weights/weights_final.safetensors", "../../networks/birds_levit/inference_time")
+print('testing effnet')
+test(EffNet, 32,"../../networks/birds_effnet/weights/weights_final.safetensors", "../../networks/birds_effnet/inference_time")
+
+print('testing deit')
+test(Deit, 40, "../../networks/birds_deit/weights/weights_final.safetensors", "../../networks/birds_deit/inference_time")
+print('testing levit')
+test(LeVit, 40,"../../networks/birds_levit/weights/weights_final.safetensors", "../../networks/birds_levit/inference_time")
+print('testing effnet')
+test(EffNet, 40,"../../networks/birds_effnet/weights/weights_final.safetensors", "../../networks/birds_effnet/inference_time")
+
+print('testing deit')
+test(Deit, 48, "../../networks/birds_deit/weights/weights_final.safetensors", "../../networks/birds_deit/inference_time")
+print('testing levit')
+test(LeVit, 48,"../../networks/birds_levit/weights/weights_final.safetensors", "../../networks/birds_levit/inference_time")
+print('testing effnet')
+test(EffNet, 48,"../../networks/birds_effnet/weights/weights_final.safetensors", "../../networks/birds_effnet/inference_time")
+
+print('testing deit')
+test(Deit, 56, "../../networks/birds_deit/weights/weights_final.safetensors", "../../networks/birds_deit/inference_time")
+print('testing levit')
+test(LeVit, 56,"../../networks/birds_levit/weights/weights_final.safetensors", "../../networks/birds_levit/inference_time")
+print('testing effnet')
+test(EffNet, 56,"../../networks/birds_effnet/weights/weights_final.safetensors", "../../networks/birds_effnet/inference_time")
+
+print('testing deit')
+test(Deit, 64, "../../networks/birds_deit/weights/weights_final.safetensors", "../../networks/birds_deit/inference_time")
+print('testing levit')
+test(LeVit, 64,"../../networks/birds_levit/weights/weights_final.safetensors", "../../networks/birds_levit/inference_time")
+print('testing effnet')
+test(EffNet, 64,"../../networks/birds_effnet/weights/weights_final.safetensors", "../../networks/birds_effnet/inference_time")
