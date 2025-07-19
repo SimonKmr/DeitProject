@@ -47,13 +47,9 @@ def test(model, n, path_weights, path_inf_log):
     model_cpu = model('cpu', 525, path_weights)
     res_model_cpu = run(model_cpu, n)
 
-    print(res_model_cpu)
-
     model_gpu = model('cuda', 525, path_weights)
     res_model_gpu = run(model_gpu, n)
 
-
-    return
     with open(f"{path_inf_log}/n{n}.csv", "w") as f:
         f.write(f'iteration;gpu;cpu\n')
         n = min(len(res_model_gpu.raw_times), len(res_model_cpu.raw_times))
